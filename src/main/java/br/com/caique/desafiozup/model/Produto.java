@@ -1,10 +1,19 @@
 package br.com.caique.desafiozup.model;
 
+import javax.persistence.*;
+
+@Entity
 public class Produto {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String descricao;
     // SKU -> fabricante – produto – modelo – código – endereçamento de estoque
     private Double peso;
+    @OneToOne(cascade = {CascadeType.ALL})
     private Dimensoes dimensoes;
+    @OneToOne(cascade = {CascadeType.ALL})
     private Fabricante fabricante;
 
     public Produto() { }
@@ -14,6 +23,14 @@ public class Produto {
         this.peso = peso;
         this.dimensoes = dimensoes;
         this.fabricante = fabricante;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDescricao() {

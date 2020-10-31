@@ -1,23 +1,45 @@
 package br.com.caique.desafiozup.controller;
 
-import br.com.caique.desafiozup.model.Dimensoes;
-import br.com.caique.desafiozup.model.Fabricante;
+import br.com.caique.desafiozup.dto.ProdutoDto;
+import br.com.caique.desafiozup.form.ProdutoForm;
 import br.com.caique.desafiozup.model.Produto;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import br.com.caique.desafiozup.repository.FabricanteRepository;
+import br.com.caique.desafiozup.repository.ProdutoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/produto")
 public class ProdutoController {
 
-    @GetMapping
-    public Produto lista() {
-        Produto produto = new Produto("Arroz 101",
-                12.2,
-                new Dimensoes(1.0, 1.0, 1.0),
-                new Fabricante("Fabrica Fortaleza"));
+    @Autowired
+    private ProdutoRepository produtoRepository;
+    @Autowired
+    private FabricanteRepository fabricanteRepository;
 
-        return produto;
+    @GetMapping
+    public ResponseEntity<Page<ProdutoDto>> lista(@RequestParam int pagina,
+                                                  @RequestParam int quantidade) {
+        Pageable pageable = PageRequest.of(pagina, quantidade);
+        return ResponseEntity.ok(new ProdutoDto().converter(produtoRepository.findAll(pageable)));
     }
+
+    @PostMapping
+    @Transactional
+    public ResponseEntity<ProdutoDto> cadastrar(@RequestBody @Valid ProdutoForm produtoForm) {
+        Produto produto = produtoForm.converter(fabricanteRepository);
+        produtoRepository.save(produto);
+        return ResponseEntity.ok(new ProdutoDto(produto));
+    }
+
+
+
 }
