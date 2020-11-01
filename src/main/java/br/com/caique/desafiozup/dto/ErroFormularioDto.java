@@ -1,4 +1,4 @@
-package br.com.caique.desafiozup.config;
+package br.com.caique.desafiozup.dto;
 
 public class ErroFormularioDto {
     private String campo;

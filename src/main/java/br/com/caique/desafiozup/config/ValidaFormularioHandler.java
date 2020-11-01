@@ -1,5 +1,6 @@
 package br.com.caique.desafiozup.config;
 
+import br.com.caique.desafiozup.dto.ErroFormularioDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;

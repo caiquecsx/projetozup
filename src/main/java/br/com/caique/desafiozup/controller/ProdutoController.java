@@ -1,6 +1,7 @@
 package br.com.caique.desafiozup.controller;
 
 import br.com.caique.desafiozup.dto.ProdutoDto;
+import br.com.caique.desafiozup.form.ProdutoAtualizacaoForm;
 import br.com.caique.desafiozup.form.ProdutoForm;
 import br.com.caique.desafiozup.model.Produto;
 import br.com.caique.desafiozup.repository.FabricanteRepository;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/produto")
@@ -40,6 +42,28 @@ public class ProdutoController {
         return ResponseEntity.ok(new ProdutoDto(produto));
     }
 
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> remover(@PathVariable Long id){
+        Optional<Produto> produtoOptional = produtoRepository.findById(id);
 
+        if(produtoOptional.isPresent()) {
+            produtoRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<ProdutoDto> atualizar(@PathVariable Long id, @RequestBody @Valid ProdutoAtualizacaoForm form) {
+        Optional<Produto> produtoOptional = produtoRepository.findById(id);
+        if(produtoOptional.isPresent()){
+            Produto produto = form.atualizar(id, produtoRepository);
+            return ResponseEntity.ok(new ProdutoDto(produto));
+        }
+        return ResponseEntity.notFound().build();
+    }
 
 }

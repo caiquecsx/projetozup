@@ -7,6 +7,7 @@ import br.com.caique.desafiozup.repository.FabricanteRepository;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public class ProdutoForm {
@@ -20,12 +21,15 @@ public class ProdutoForm {
     private Dimensoes dimensoes;
     @NotNull
     private Fabricante fabricante;
+    @NotNull
+    private BigDecimal preco;
 
-    public ProdutoForm(String descricao, Double peso, Dimensoes dimensoes, Fabricante fabricante) {
+    public ProdutoForm(String descricao, Double peso, Dimensoes dimensoes, Fabricante fabricante, BigDecimal preco) {
         this.descricao = descricao;
         this.peso = peso;
         this.dimensoes = dimensoes;
         this.fabricante = fabricante;
+        this.preco = preco;
     }
 
     public Produto converter(FabricanteRepository fabricanteRepository) {
@@ -33,11 +37,11 @@ public class ProdutoForm {
         if(this.fabricante.getId() != null){
             Optional<Fabricante> fabricante = fabricanteRepository.findById(this.fabricante.getId());
             if(fabricante.isPresent()){
-                return new Produto(this.descricao, this.peso, this.dimensoes, fabricante.get());
+                return new Produto(this.descricao, this.peso, this.dimensoes, fabricante.get(), this.preco);
             }
         }
 
-        return new Produto(this.descricao, this.peso, this.dimensoes, this.fabricante);
+        return new Produto(this.descricao, this.peso, this.dimensoes, this.fabricante, this.preco);
     }
 
     @Override

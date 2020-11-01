@@ -1,6 +1,10 @@
 package br.com.caique.desafiozup.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 public class Produto {
@@ -11,18 +15,22 @@ public class Produto {
     private String descricao;
     // SKU -> fabricante – produto – modelo – código – endereçamento de estoque
     private Double peso;
-    @OneToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Dimensoes dimensoes;
-    @OneToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Fabricante fabricante;
+    private BigDecimal preco;
 
     public Produto() { }
 
-    public Produto(String descricao, Double peso, Dimensoes dimensoes, Fabricante fabricante) {
+    public Produto(String descricao, Double peso, Dimensoes dimensoes, Fabricante fabricante, BigDecimal preco) {
         this.descricao = descricao;
         this.peso = peso;
         this.dimensoes = dimensoes;
         this.fabricante = fabricante;
+        this.preco = preco;
     }
 
     public Long getId() {
@@ -63,5 +71,13 @@ public class Produto {
 
     public void setFabricante(Fabricante fabricante) {
         this.fabricante = fabricante;
+    }
+
+    public BigDecimal getPreco() {
+        return preco;
+    }
+
+    public void setPreco(BigDecimal preco) {
+        this.preco = preco;
     }
 }
