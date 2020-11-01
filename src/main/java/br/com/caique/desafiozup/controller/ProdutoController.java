@@ -1,11 +1,14 @@
 package br.com.caique.desafiozup.controller;
 
+import br.com.caique.desafiozup.DesafiozupApplication;
 import br.com.caique.desafiozup.dto.ProdutoDto;
 import br.com.caique.desafiozup.form.ProdutoAtualizacaoForm;
 import br.com.caique.desafiozup.form.ProdutoForm;
 import br.com.caique.desafiozup.model.Produto;
 import br.com.caique.desafiozup.repository.FabricanteRepository;
 import br.com.caique.desafiozup.repository.ProdutoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -27,10 +29,13 @@ public class ProdutoController {
     @Autowired
     private FabricanteRepository fabricanteRepository;
 
+    private static Logger logger = LoggerFactory.getLogger(DesafiozupApplication.class);
+
     @GetMapping
     public ResponseEntity<Page<ProdutoDto>> lista(@RequestParam int pagina,
                                                   @RequestParam int quantidade) {
         Pageable pageable = PageRequest.of(pagina, quantidade);
+
         return ResponseEntity.ok(new ProdutoDto().converter(produtoRepository.findAll(pageable)));
     }
 
@@ -52,6 +57,7 @@ public class ProdutoController {
             return ResponseEntity.ok().build();
         }
 
+        logger.warn("Nenhum usuário encontrado para o ID: "+ id);
         return ResponseEntity.notFound().build();
     }
 
