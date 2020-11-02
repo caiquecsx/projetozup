@@ -1,9 +1,13 @@
 package br.com.caique.desafiozup.config;
 
+import br.com.caique.desafiozup.DesafiozupApplication;
 import br.com.caique.desafiozup.dto.ErroFormularioDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,6 +24,8 @@ public class ValidaFormularioHandler {
     @Autowired
     private MessageSource messageSource;
 
+    private static Logger logger = LoggerFactory.getLogger(DesafiozupApplication.class);
+
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public List<ErroFormularioDto> handle(MethodArgumentNotValidException exception) {
@@ -34,4 +40,11 @@ public class ValidaFormularioHandler {
 
         return dto;
     }
+
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
+    public void handle(IncorrectResultSizeDataAccessException exception) {
+        logger.warn("Falha na consulta: " + exception.getMessage());
+    }
+
 }
