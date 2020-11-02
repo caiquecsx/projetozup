@@ -32,7 +32,7 @@ public class ProdutoController {
     private static Logger logger = LoggerFactory.getLogger(DesafiozupApplication.class);
 
     @GetMapping
-    public ResponseEntity<Page<ProdutoDto>> lista(@RequestParam int pagina,
+    public ResponseEntity<Page<ProdutoDto>> listar(@RequestParam int pagina,
                                                   @RequestParam int quantidade) {
         Pageable pageable = PageRequest.of(pagina, quantidade);
 

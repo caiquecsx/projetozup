@@ -7,4 +7,5 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ProdutoRepository extends JpaRepository<Produto, Long> { }
+public interface ProdutoRepository
+        extends JpaRepository<Produto, Long> { }
