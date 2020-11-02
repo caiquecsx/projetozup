@@ -1,6 +1,7 @@
 package br.com.caique.desafiozup.controller;
 
 import br.com.caique.desafiozup.dto.PedidoDto;
+import br.com.caique.desafiozup.form.PedidoAtualizacaoForm;
 import br.com.caique.desafiozup.form.PedidoForm;
 import br.com.caique.desafiozup.model.Pedido;
 import br.com.caique.desafiozup.repository.PedidoRepository;
@@ -56,7 +57,12 @@ public class PedidosController {
 
     @PutMapping("/{id}")
     @Transactional
-    public void atualizar(@PathVariable Long id) {
-        //TODO: PedidoAtualizacaoForm form
+    public ResponseEntity<PedidoDto> atualizar(@PathVariable Long id, @RequestBody PedidoAtualizacaoForm form) {
+        Optional<Pedido> pedidoOptional = pedidoRepository.findById(id);
+        if(pedidoOptional.isPresent()){
+            Pedido pedido = form.atualizar(id, pedidoRepository, produtoRepository);
+            return ResponseEntity.ok(new PedidoDto(pedido));
+        }
+        return ResponseEntity.notFound().build();
     }
 }

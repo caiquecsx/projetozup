@@ -1,13 +1,11 @@
 package br.com.caique.desafiozup.form;
 
+import br.com.caique.desafiozup.helper.PedidoHelper;
 import br.com.caique.desafiozup.model.Pedido;
 import br.com.caique.desafiozup.model.Produto;
 import br.com.caique.desafiozup.repository.ProdutoRepository;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class PedidoForm {
 
@@ -17,15 +15,8 @@ public class PedidoForm {
     private Double desconto;
 
     public Pedido converter(ProdutoRepository produtoRepository) {
-
-        List<Produto> produtos = new ArrayList<>();
-        this.produtos.forEach(id -> {
-            Optional<Produto> produto = produtoRepository.findById(id);
-            if(produto.isPresent()) {
-                produtos.add(produto.get());
-            }else
-                throw new IncorrectResultSizeDataAccessException(1);
-        });
+        List<Produto> produtos;
+        produtos = PedidoHelper.AtualizarListaDeProdutos(produtoRepository, this.produtos);
 
         Pedido pedido = new Pedido(this.cliente, this.telefone, produtos, this.desconto);
         return pedido;
