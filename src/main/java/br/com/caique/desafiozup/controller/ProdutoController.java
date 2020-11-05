@@ -1,75 +1,46 @@
 package br.com.caique.desafiozup.controller;
 
-import br.com.caique.desafiozup.DesafiozupApplication;
 import br.com.caique.desafiozup.dto.ProdutoDto;
 import br.com.caique.desafiozup.form.ProdutoAtualizacaoForm;
 import br.com.caique.desafiozup.form.ProdutoForm;
-import br.com.caique.desafiozup.model.Produto;
-import br.com.caique.desafiozup.repository.FabricanteRepository;
-import br.com.caique.desafiozup.repository.ProdutoRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import br.com.caique.desafiozup.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/produto")
 public class ProdutoController {
 
     @Autowired
-    private ProdutoRepository produtoRepository;
-    @Autowired
-    private FabricanteRepository fabricanteRepository;
-
-    private static Logger logger = LoggerFactory.getLogger(DesafiozupApplication.class);
+    private ProdutoService produtoService;
 
     @GetMapping
-    public ResponseEntity<Page<ProdutoDto>> listar(@RequestParam int pagina,
-                                                  @RequestParam int quantidade) {
-        Pageable pageable = PageRequest.of(pagina, quantidade);
-
-        return ResponseEntity.ok(new ProdutoDto().converter(produtoRepository.findAll(pageable)));
+    public ResponseEntity<Page<ProdutoDto>> listar(@RequestParam int pagina, @RequestParam int quantidade) {
+        return ResponseEntity.ok(produtoService.listar(pagina, quantidade));
     }
 
     @PostMapping
     @Transactional
     public ResponseEntity<ProdutoDto> cadastrar(@RequestBody @Valid ProdutoForm produtoForm) {
-        Produto produto = produtoForm.converter(fabricanteRepository);
-        produtoRepository.save(produto);
-        return ResponseEntity.ok(new ProdutoDto(produto));
+        return ResponseEntity.ok(produtoService.cadastrar(produtoForm));
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<?> remover(@PathVariable Long id){
-        Optional<Produto> produtoOptional = produtoRepository.findById(id);
-
-        if(produtoOptional.isPresent()) {
-            produtoRepository.deleteById(id);
-            return ResponseEntity.ok().build();
-        }
-
-        logger.warn("Nenhum usuário encontrado para o ID: "+ id);
-        return ResponseEntity.notFound().build();
+        //TODO Validação do ID
+        return produtoService.remover(id);
     }
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<ProdutoDto> atualizar(@PathVariable Long id, @RequestBody @Valid ProdutoAtualizacaoForm form) {
-        Optional<Produto> produtoOptional = produtoRepository.findById(id);
-        if(produtoOptional.isPresent()){
-            Produto produto = form.atualizar(id, produtoRepository);
-            return ResponseEntity.ok(new ProdutoDto(produto));
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid ProdutoAtualizacaoForm form) {
+        return produtoService.atualizar(id, form);
     }
 
 }
