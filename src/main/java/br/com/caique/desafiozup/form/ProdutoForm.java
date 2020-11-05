@@ -14,7 +14,7 @@ public class ProdutoForm {
 
     @NotEmpty @NotNull
     private String descricao;
-    // SKU -> fabricante – produto – modelo – código – endereçamento de estoque
+    //TODO SKU -> fabricante – produto – modelo – código – endereçamento de estoque
     @NotNull
     private Double peso;
     @NotNull

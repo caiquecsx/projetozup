@@ -1,7 +1,5 @@
 package br.com.caique.desafiozup.form;
 
-import br.com.caique.desafiozup.model.Dimensoes;
-import br.com.caique.desafiozup.model.Fabricante;
 import br.com.caique.desafiozup.model.Produto;
 import br.com.caique.desafiozup.repository.ProdutoRepository;
 
