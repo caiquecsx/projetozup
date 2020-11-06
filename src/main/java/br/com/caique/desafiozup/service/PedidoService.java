@@ -6,23 +6,27 @@ import br.com.caique.desafiozup.form.PedidoForm;
 import br.com.caique.desafiozup.model.Pedido;
 import br.com.caique.desafiozup.repository.PedidoRepository;
 import br.com.caique.desafiozup.repository.ProdutoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Optional;
 
 @Service
 public class PedidoService {
 
-    @Autowired
-    ProdutoRepository produtoRepository;
+    private final ProdutoRepository produtoRepository;
 
-    @Autowired
-    PedidoRepository pedidoRepository;
+    private final PedidoRepository pedidoRepository;
+
+    public PedidoService(ProdutoRepository produtoRepository, PedidoRepository pedidoRepository) {
+        this.produtoRepository = produtoRepository;
+        this.pedidoRepository = pedidoRepository;
+    }
 
     public Page<PedidoDto> listar(int pagina, int quantidade) {
         Pageable pageable = PageRequest.of(pagina, quantidade);
@@ -51,6 +55,17 @@ public class PedidoService {
             Pedido pedido = pedidoAtualizacaoForm.atualizar(id, pedidoRepository, produtoRepository);
             return ResponseEntity.ok(new PedidoDto(pedido));
         }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PedidoDto> detalhar(@PathVariable Long id) {
+        //TODO mover implementação para o service
+        Optional<Pedido> pedidoOptional = pedidoRepository.findById(id);
+        if (pedidoOptional.isPresent()){
+            return ResponseEntity.ok(new PedidoDto(pedidoOptional.get()));
+        }
+
         return ResponseEntity.notFound().build();
     }
 

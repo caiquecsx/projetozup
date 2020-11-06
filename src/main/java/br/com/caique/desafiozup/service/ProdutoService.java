@@ -6,7 +6,6 @@ import br.com.caique.desafiozup.form.ProdutoForm;
 import br.com.caique.desafiozup.model.Produto;
 import br.com.caique.desafiozup.repository.FabricanteRepository;
 import br.com.caique.desafiozup.repository.ProdutoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +17,13 @@ import java.util.Optional;
 @Service
 public class ProdutoService {
 
-    @Autowired
-    private ProdutoRepository produtoRepository;
-    @Autowired
-    private FabricanteRepository fabricanteRepository;
+    private final ProdutoRepository produtoRepository;
+    private final FabricanteRepository fabricanteRepository;
+
+    public ProdutoService(ProdutoRepository produtoRepository, FabricanteRepository fabricanteRepository) {
+        this.produtoRepository = produtoRepository;
+        this.fabricanteRepository = fabricanteRepository;
+    }
 
     public Page<ProdutoDto> listar(int pagina, int quantidade) {
         Pageable pageable = PageRequest.of(pagina, quantidade);

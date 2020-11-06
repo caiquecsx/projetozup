@@ -16,8 +16,11 @@ import javax.validation.Valid;
 @RequestMapping("/produto")
 public class ProdutoController {
 
-    @Autowired
-    private ProdutoService produtoService;
+    private final ProdutoService produtoService;
+
+    public ProdutoController(ProdutoService produtoService) {
+        this.produtoService = produtoService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<ProdutoDto>> listar(@RequestParam int pagina, @RequestParam int quantidade) {

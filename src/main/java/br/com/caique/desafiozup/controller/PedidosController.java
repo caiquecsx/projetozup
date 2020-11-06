@@ -15,8 +15,11 @@ import javax.transaction.Transactional;
 @RequestMapping("/pedido")
 public class PedidosController {
 
-    @Autowired
-    PedidoService pedidoService;
+    private final PedidoService pedidoService;
+
+    public PedidosController(PedidoService pedidoService) {
+        this.pedidoService = pedidoService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<PedidoDto>> listar() {
