@@ -24,3 +24,5 @@ services:
     tty: true
     depends_on:
       - db
+    links:
+      - db:db
