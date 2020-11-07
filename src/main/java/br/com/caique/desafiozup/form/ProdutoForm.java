@@ -1,5 +1,6 @@
 package br.com.caique.desafiozup.form;
 
+import br.com.caique.desafiozup.exception.FabricanteInvalidoException;
 import br.com.caique.desafiozup.model.Dimensoes;
 import br.com.caique.desafiozup.model.Fabricante;
 import br.com.caique.desafiozup.model.Produto;
@@ -14,7 +15,8 @@ public class ProdutoForm {
 
     @NotEmpty @NotNull
     private String descricao;
-    //TODO SKU -> fabricante – produto – modelo – código – endereçamento de estoque
+    @NotEmpty @NotNull
+    private String sku;
     @NotNull
     private Double peso;
     @NotNull
@@ -24,24 +26,27 @@ public class ProdutoForm {
     @NotNull
     private BigDecimal preco;
 
-    public ProdutoForm(String descricao, Double peso, Dimensoes dimensoes, Fabricante fabricante, BigDecimal preco) {
+    public ProdutoForm(String descricao, String sky, Double peso, Dimensoes dimensoes, Fabricante fabricante, BigDecimal preco) {
         this.descricao = descricao;
+        this.sku = sku;
         this.peso = peso;
         this.dimensoes = dimensoes;
         this.fabricante = fabricante;
         this.preco = preco;
     }
 
-    public Produto converter(FabricanteRepository fabricanteRepository) {
+    public Produto converter(FabricanteRepository fabricanteRepository) throws FabricanteInvalidoException {
 
         if(this.fabricante.getId() != null){
             Optional<Fabricante> fabricante = fabricanteRepository.findById(this.fabricante.getId());
             if(fabricante.isPresent()){
-                return new Produto(this.descricao, this.peso, this.dimensoes, fabricante.get(), this.preco);
+                return new Produto(this.descricao, this.sku, this.peso, this.dimensoes, fabricante.get(), this.preco);
+            }else{
+                throw new FabricanteInvalidoException("Identificados do fabricante informado não foi encontrado!");
             }
         }
 
-        return new Produto(this.descricao, this.peso, this.dimensoes, this.fabricante, this.preco);
+        return new Produto(this.descricao, this.sku, this.peso, this.dimensoes, this.fabricante, this.preco);
     }
 
     @Override
@@ -70,4 +75,7 @@ public class ProdutoForm {
         return fabricante;
     }
 
+    public String getSku() {
+        return sku;
+    }
 }

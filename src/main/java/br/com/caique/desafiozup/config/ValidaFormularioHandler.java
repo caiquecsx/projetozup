@@ -2,6 +2,7 @@ package br.com.caique.desafiozup.config;
 
 import br.com.caique.desafiozup.DesafiozupApplication;
 import br.com.caique.desafiozup.dto.ErroFormularioDto;
+import br.com.caique.desafiozup.exception.FabricanteInvalidoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

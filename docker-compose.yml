@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  db:
+    image: postgres
+    container_name: postgres-zup
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=zupdesafio
+    ports:
+      - 5432:5432
+    restart: always
+
+  api:
+    image: api-zup
+    container_name: api-zup
+    build: ./
+    ports:
+      - 8080:8080
+    restart: always
+    stdin_open: true
+    tty: true
+    depends_on:
+      - db

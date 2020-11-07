@@ -4,7 +4,6 @@ import br.com.caique.desafiozup.dto.PedidoDto;
 import br.com.caique.desafiozup.form.PedidoAtualizacaoForm;
 import br.com.caique.desafiozup.form.PedidoForm;
 import br.com.caique.desafiozup.service.PedidoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +21,9 @@ public class PedidosController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<PedidoDto>> listar() {
-        return ResponseEntity.ok(pedidoService.listar(0, 10));
+    public ResponseEntity<Page<PedidoDto>> listar(@RequestParam int pagina, @RequestParam int quantidade) {
+        //TODO definir pagina e quantidade padrão para quando não forem enviados.
+        return ResponseEntity.ok(pedidoService.listar(pagina, quantidade));
     }
 
     @PostMapping

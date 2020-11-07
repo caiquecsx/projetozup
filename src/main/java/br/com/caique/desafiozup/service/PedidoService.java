@@ -60,7 +60,7 @@ public class PedidoService {
 
     @GetMapping("/{id}")
     public ResponseEntity<PedidoDto> detalhar(@PathVariable Long id) {
-        //TODO mover implementação para o service
+        //TODO mover implementação para o service e criar o detalhar de produto.
         Optional<Pedido> pedidoOptional = pedidoRepository.findById(id);
         if (pedidoOptional.isPresent()){
             return ResponseEntity.ok(new PedidoDto(pedidoOptional.get()));

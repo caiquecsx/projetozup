@@ -13,7 +13,8 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String descricao;
-    // SKU -> fabricante – produto – modelo – código – endereçamento de estoque
+    //TODO SKUs -> fabricante – produto – modelo – código – endereçamento de estoque
+    private String sku;
     private Double peso;
     @ManyToOne(cascade = {CascadeType.PERSIST})
     @OnDelete(action = OnDeleteAction.NO_ACTION)
@@ -25,8 +26,9 @@ public class Produto {
 
     public Produto() { }
 
-    public Produto(String descricao, Double peso, Dimensoes dimensoes, Fabricante fabricante, BigDecimal preco) {
+    public Produto(String descricao, String sku, Double peso, Dimensoes dimensoes, Fabricante fabricante, BigDecimal preco) {
         this.descricao = descricao;
+        this.sku = sku;
         this.peso = peso;
         this.dimensoes = dimensoes;
         this.fabricante = fabricante;
@@ -47,6 +49,14 @@ public class Produto {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 
     public Double getPeso() {

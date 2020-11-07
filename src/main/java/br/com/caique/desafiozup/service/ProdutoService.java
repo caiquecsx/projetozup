@@ -1,11 +1,15 @@
 package br.com.caique.desafiozup.service;
 
+import br.com.caique.desafiozup.DesafiozupApplication;
 import br.com.caique.desafiozup.dto.ProdutoDto;
+import br.com.caique.desafiozup.exception.FabricanteInvalidoException;
 import br.com.caique.desafiozup.form.ProdutoAtualizacaoForm;
 import br.com.caique.desafiozup.form.ProdutoForm;
 import br.com.caique.desafiozup.model.Produto;
 import br.com.caique.desafiozup.repository.FabricanteRepository;
 import br.com.caique.desafiozup.repository.ProdutoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +24,8 @@ public class ProdutoService {
     private final ProdutoRepository produtoRepository;
     private final FabricanteRepository fabricanteRepository;
 
+    private static Logger logger = LoggerFactory.getLogger(DesafiozupApplication.class);
+
     public ProdutoService(ProdutoRepository produtoRepository, FabricanteRepository fabricanteRepository) {
         this.produtoRepository = produtoRepository;
         this.fabricanteRepository = fabricanteRepository;
@@ -30,10 +36,19 @@ public class ProdutoService {
         return new ProdutoDto().converter(produtoRepository.findAll(pageable));
     }
 
-    public ProdutoDto cadastrar(ProdutoForm produtoForm) {
-        Produto produto = produtoForm.converter(fabricanteRepository);
-        produtoRepository.save(produto);
-        return new ProdutoDto(produto);
+    public ResponseEntity<?> cadastrar(ProdutoForm produtoForm) {
+        Produto produto = null;
+        try {
+            produto = produtoForm.converter(fabricanteRepository);
+            produtoRepository.save(produto);
+            return ResponseEntity.ok(new ProdutoDto(produto));
+        } catch (FabricanteInvalidoException e) {
+            logger.error(e.getMessage());
+
+            //TODO padronizar retorno de erro
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
+        }
     }
 
     public ResponseEntity<?> remover(Long id) {

@@ -14,7 +14,7 @@ public class PedidoDto {
     private String telefone;
     private List<Produto> produtos;
     private Double desconto;
-    private BigDecimal valorTotal;;
+    private BigDecimal valorTotal;
 
     public PedidoDto() {}
 
