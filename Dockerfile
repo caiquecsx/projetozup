@@ -10,7 +10,7 @@
 # Package stage
 #
 FROM openjdk:11-jre-slim
-#COPY --from=build /home/app/target/desafiozup*.jar /usr/local/lib/app.jar
+#COPY --from=build /home/app/target/desafiozup*.jar /app.jar
 COPY /target/desafiozup-*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom", "-jar","/app.jar"]

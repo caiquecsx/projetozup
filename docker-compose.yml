@@ -12,6 +12,7 @@ services:
       - 5432:5432
     restart: always
 
+#Gera erro ao conectar na base postgres.
   api:
     image: api-zup
     container_name: api-zup
