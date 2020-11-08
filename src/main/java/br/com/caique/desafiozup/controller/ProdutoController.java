@@ -64,4 +64,13 @@ public class ProdutoController {
         return ResponseEntity.badRequest().build();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> detalhes(@PathVariable Long id) {
+        Optional<ProdutoDto> produtoDtoOptional = produtoService.detalhes(id);
+        if(produtoDtoOptional.isPresent()){
+            return ResponseEntity.ok(produtoDtoOptional);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 }

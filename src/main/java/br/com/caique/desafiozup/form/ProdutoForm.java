@@ -26,7 +26,7 @@ public class ProdutoForm {
     @NotNull
     private BigDecimal preco;
 
-    public ProdutoForm(String descricao, String sky, Double peso, Dimensoes dimensoes, Fabricante fabricante, BigDecimal preco) {
+    public ProdutoForm(String descricao, String sku, Double peso, Dimensoes dimensoes, Fabricante fabricante, BigDecimal preco) {
         this.descricao = descricao;
         this.sku = sku;
         this.peso = peso;

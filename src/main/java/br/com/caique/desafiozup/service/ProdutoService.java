@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -62,6 +61,14 @@ public class ProdutoService {
         if(produtoOptional.isPresent()){
             Produto produto = produtoAtualizacaoForm.atualizar(id, produtoRepository);
             return Optional.of(new ProdutoDto(produto));
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ProdutoDto> detalhes(Long id) {
+        Optional<Produto> produtoOptional = produtoRepository.findById(id);
+        if(produtoOptional.isPresent()){
+            return Optional.of(new ProdutoDto(produtoOptional.get()));
         }
         return Optional.empty();
     }
