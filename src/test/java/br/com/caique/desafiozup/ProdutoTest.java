@@ -1,6 +1,7 @@
 package br.com.caique.desafiozup;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,166 +11,154 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.caique.desafiozup.dto.ProdutoDto;
 import br.com.caique.desafiozup.form.ProdutoAtualizacaoForm;
 import br.com.caique.desafiozup.form.ProdutoForm;
-import br.com.caique.desafiozup.model.Dimensoes;
-import br.com.caique.desafiozup.model.Fabricante;
 import br.com.caique.desafiozup.repository.FabricanteRepository;
 import br.com.caique.desafiozup.repository.ProdutoRepository;
 import br.com.caique.desafiozup.service.ProdutoService;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-//@Rollback
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ProdutoTest {
 
-    @Autowired
-    ProdutoRepository produtoRepository;
+	@Autowired
+	ProdutoRepository produtoRepository;
 
-    @Autowired
-    FabricanteRepository fabricanteRepository;
+	@Autowired
+	FabricanteRepository fabricanteRepository;
 
-    ProdutoService produtoService;
+	ProdutoService produtoService;
 
-    public static final String descricao = "Teste";
-    public static final Double peso = 3.0;
-    public static final BigDecimal preco = new BigDecimal("1.25");
-    public static final String sku = "123456";
-    public static final int pagina = 1;
-    public static final int quantidade = 2;
-    public static final String MSG_ID_FABRICANTE_NAO_ENCONTRADO = "Identificador do fabricante informado não foi encontrado!";
-    public static Long idProduto;
+	public static final String nomeFabricante = "Teste LTDA";
 
-    @BeforeEach
-    void initUseCase() {
-        produtoService = new ProdutoService(produtoRepository, fabricanteRepository);
-    }
+	@BeforeEach
+	void initUseCase() {
+		produtoService = new ProdutoService(produtoRepository, fabricanteRepository);
+	}
 
-    @Test
-    public void testListar() {
-        Page<ProdutoDto> produtoDtoRetornadalist = produtoService.listar(pagina, quantidade);
-        assertEquals(quantidade, produtoDtoRetornadalist.getSize());
-    }
+	@DisplayName("Verificar listagem de produto")
+	@Test
+	public void testListar() {
+		Page<ProdutoDto> produtoDtolist = produtoService.listar(ObjectUtilTest.pagina, ObjectUtilTest.quantidade);
+		assertEquals(ObjectUtilTest.quantidade, produtoDtolist.getSize());
+	}
 
-    @DisplayName("Verificar cadastro de produto")
-    @Test
-    @Order(1)
-    public void testCadastrar() {
-        // Dado
-        ProdutoForm produtoForm = new ProdutoForm(descricao, sku, peso, setDimensoes(), setFabricante(), preco);
+	@DisplayName("Verificar cadastro de produto")
+	@Test
+	public void testCadastrar() {
+		ProdutoForm produtoForm = new ProdutoForm(ObjectUtilTest.descricao, ObjectUtilTest.sku, ObjectUtilTest.peso,
+				ObjectUtilTest.getDimensoes(), ObjectUtilTest.getFabricante(), ObjectUtilTest.preco);
 
-        // Quando
-        Optional<ProdutoDto> produtoOptional = produtoService.cadastrar(produtoForm);
-        idProduto = produtoOptional.get().getId();
+		Optional<ProdutoDto> produtoOptional = produtoService.cadastrar(produtoForm);
 
-        // Então
-        if (produtoOptional.isPresent()) {
-            verficicarDadosProduto(produtoOptional);
-        } else {
-            //assertEquals(MSG_ID_FABRICANTE_NAO_ENCONTRADO, );
-        }
+		verificarDadosProduto(produtoOptional);
+	}
 
-    }
+	@DisplayName("Verificar detalhamento de produto")
+	@Test
+	public void testDetalhar() {
+		Long id = cadastrarProduto();
 
-    @DisplayName("Verificar detalhamento de produto")
-    @Test
-    @Order(2)
-    public void testDetalhar() {
-        //dado
-        Long id = cadastrarProduto();
+		Optional<ProdutoDto> produtoOptional = produtoService.detalhar(id);
 
-        //quando
-        Optional<ProdutoDto> produtoOptional = produtoService.detalhar(id);
+		verificarDadosProduto(produtoOptional);
+	}
 
-        //então
-        verficicarDadosProduto(produtoOptional);
-    }
+	@DisplayName("Verificar alteração de produto")
+	@Test
+	public void testAtualizar() {
+		Long id = cadastrarProduto();
 
-    @DisplayName("Verificar alteração de produto")
-    @Test
-    @Order(3)
-    public void testAtualizar() {
-        //dado
-        Long id = cadastrarProduto();
+		Optional<ProdutoDto> produtoOptionalAntesAlteracao = produtoService.detalhar(id);
+		verificarDadosProduto(produtoOptionalAntesAlteracao);
 
-        //quando
-        Optional<ProdutoDto> produtoOptionalAntesAlteracao = produtoService.detalhar(id);
-        verficicarDadosProduto(produtoOptionalAntesAlteracao);
+		ProdutoAtualizacaoForm produtoAtualizacaoForm = new ProdutoAtualizacaoForm();
+		produtoAtualizacaoForm.setDescricao("Teste2");
+		produtoAtualizacaoForm.setPeso(5.0);
+		produtoAtualizacaoForm.setPreco(new BigDecimal("4.00"));
 
-        ProdutoAtualizacaoForm produtoAtualizacaoForm = new ProdutoAtualizacaoForm();
-        produtoAtualizacaoForm.setDescricao("Teste2");
-        produtoAtualizacaoForm.setPeso(5.0);
-        produtoAtualizacaoForm.setPreco(new BigDecimal("4.00"));
+		Optional<ProdutoDto> produtoOptionalDepoisAlteracao = produtoService.atualizar(id, produtoAtualizacaoForm);
 
-        Optional<ProdutoDto> produtoOptionalDepoisAlteracao = produtoService.atualizar(id, produtoAtualizacaoForm);
+		assertNotEquals(produtoOptionalAntesAlteracao.get().getDescricao(),
+				produtoOptionalDepoisAlteracao.get().getDescricao());
+		assertNotEquals(produtoOptionalAntesAlteracao.get().getPreco(),
+				produtoOptionalDepoisAlteracao.get().getPreco());
 
-        assertNotEquals(descricao, produtoOptionalDepoisAlteracao.get().getDescricao());
-        assertNotEquals(preco, produtoOptionalDepoisAlteracao.get().getPreco());
+		assertEquals(produtoOptionalAntesAlteracao.get().getId(), produtoOptionalDepoisAlteracao.get().getId());
+		assertEquals(produtoOptionalAntesAlteracao.get().getSku(), produtoOptionalDepoisAlteracao.get().getSku());
+		assertEquals(produtoOptionalAntesAlteracao.get().getFabricante(),
+				produtoOptionalDepoisAlteracao.get().getFabricante());
+	}
 
-        assertEquals(id, produtoOptionalDepoisAlteracao.get().getId());
-        assertEquals(sku, produtoOptionalDepoisAlteracao.get().getSku());
-    }
+	@DisplayName("Verificar alteração de produto inexistente")
+	@Test
+	public void testAtualizarProdutoInexistente() {
+		Long id = 0L;
 
-    @DisplayName("Testar remoção produto")
-    @Test
-    @Order(4)
-    public void testRemover() {
-        //dado
-        Long id = cadastrarProduto();
-        //quando
-        Optional<ProdutoDto> produtoOptional = produtoService.detalhar(id);
+		ProdutoAtualizacaoForm produtoAtualizacaoForm = new ProdutoAtualizacaoForm();
+		produtoAtualizacaoForm.setDescricao("Teste2");
+		produtoAtualizacaoForm.setPeso(5.0);
+		produtoAtualizacaoForm.setPreco(new BigDecimal("4.00"));
 
-        verficicarDadosProduto(produtoOptional);
+		Optional<ProdutoDto> produtoOptional = produtoService.atualizar(id, produtoAtualizacaoForm);
 
-        // Quando
-        Boolean retorno = produtoService.remover(produtoOptional.get().getId());
+		assertTrue(produtoOptional.isEmpty());
+	}
 
-        // Então
-        assertTrue(retorno);
+	@DisplayName("Testar remoção produto")
+	@Test
+	public void testRemover() {
+		Long id = cadastrarProduto();
 
-        produtoOptional = produtoService.detalhar(idProduto);
+		Optional<ProdutoDto> produtoOptional = produtoService.detalhar(id);
 
-        assertTrue(produtoOptional.isEmpty());
-    }
+		verificarDadosProduto(produtoOptional);
 
-    public Long cadastrarProduto() {
-        ProdutoForm produtoForm = new ProdutoForm(descricao, sku, peso, setDimensoes(), setFabricante(), preco);
-        Optional<ProdutoDto> produtoOptional = produtoService.cadastrar(produtoForm);
-        return produtoOptional.get().getId();
-    }
+		Boolean retorno = produtoService.remover(produtoOptional.get().getId());
 
-    public Dimensoes setDimensoes() {
-        Dimensoes dimensoes = new Dimensoes();
-        dimensoes.setAltura(2.0);
-        dimensoes.setLargura(1.0);
-        dimensoes.setProfundidade(1.0);
-        return dimensoes;
-    }
+		assertTrue(retorno);
 
-    public Fabricante setFabricante() {
-        Fabricante fabricante = new Fabricante();
-        fabricante.setNome("Teste LTDA");
-        return fabricante;
-    }
+		produtoOptional = produtoService.detalhar(id);
 
-    public void verficicarDadosProduto(Optional<ProdutoDto> produtoOptional) {
-        assertNotNull(produtoOptional.get().getId());
-        assertEquals(descricao, produtoOptional.get().getDescricao());
-        assertEquals(sku, produtoOptional.get().getSku());
-        assertNotNull(produtoOptional.get().getFabricante().getId());
-        assertEquals(setFabricante().getNome(), produtoOptional.get().getFabricante().getNome());
-        assertEquals(preco, produtoOptional.get().getPreco());
-    }
+		assertTrue(produtoOptional.isEmpty());
+	}
+
+	@DisplayName("Testar remoção de produto inexistente")
+	@Test
+	public void testRemoverProdutoInexistente() {
+		Long id = 0L;
+
+		Optional<ProdutoDto> produtoOptional = produtoService.detalhar(id);
+
+		assertTrue(produtoOptional.isEmpty());
+
+		Boolean retorno = produtoService.remover(id);
+
+		assertFalse(retorno);
+
+	}
+
+	private Long cadastrarProduto() {
+		ProdutoForm produtoForm = new ProdutoForm(ObjectUtilTest.descricao, ObjectUtilTest.sku, ObjectUtilTest.peso,
+				ObjectUtilTest.getDimensoes(), ObjectUtilTest.getFabricante(), ObjectUtilTest.preco);
+		Optional<ProdutoDto> produtoOptional = produtoService.cadastrar(produtoForm);
+		return produtoOptional.get().getId();
+	}
+
+	private void verificarDadosProduto(Optional<ProdutoDto> produtoOptional) {
+		assertNotNull(produtoOptional.get().getId());
+		assertEquals(ObjectUtilTest.descricao, produtoOptional.get().getDescricao());
+		assertEquals(ObjectUtilTest.sku, produtoOptional.get().getSku());
+		assertNotNull(produtoOptional.get().getFabricante().getId());
+		assertEquals(nomeFabricante, produtoOptional.get().getFabricante().getNome());
+		assertEquals(ObjectUtilTest.preco, produtoOptional.get().getPreco());
+	}
 
 }
