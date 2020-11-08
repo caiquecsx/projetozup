@@ -42,7 +42,7 @@ public class ProdutoForm {
             if(fabricante.isPresent()){
                 return new Produto(this.descricao, this.sku, this.peso, this.dimensoes, fabricante.get(), this.preco);
             }else{
-                throw new FabricanteInvalidoException("Identificados do fabricante informado não foi encontrado!");
+                throw new FabricanteInvalidoException("Identificador do fabricante informado não foi encontrado!");
             }
         }
 

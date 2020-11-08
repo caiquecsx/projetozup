@@ -36,37 +36,34 @@ public class ProdutoService {
         return new ProdutoDto().converter(produtoRepository.findAll(pageable));
     }
 
-    public ResponseEntity<?> cadastrar(ProdutoForm produtoForm) {
+    public Optional<ProdutoDto> cadastrar(ProdutoForm produtoForm) {
         Produto produto = null;
         try {
             produto = produtoForm.converter(fabricanteRepository);
             produtoRepository.save(produto);
-            return ResponseEntity.ok(new ProdutoDto(produto));
+            return Optional.of(new ProdutoDto(produto));
         } catch (FabricanteInvalidoException e) {
             logger.error(e.getMessage());
-
-            //TODO padronizar retorno de erro
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
+            return Optional.empty();
         }
     }
 
-    public ResponseEntity<?> remover(Long id) {
+    public Boolean remover(Long id) {
         Optional<Produto> produtoOptional = produtoRepository.findById(id);
         if(produtoOptional.isPresent()) {
             produtoRepository.deleteById(id);
-            return ResponseEntity.ok().build();
+            return true;
         }
-        return ResponseEntity.notFound().build();
+        return false;
     }
 
-    public ResponseEntity<?> atualizar(Long id, ProdutoAtualizacaoForm produtoAtualizacaoForm) {
+    public Optional<ProdutoDto> atualizar(Long id, ProdutoAtualizacaoForm produtoAtualizacaoForm) {
         Optional<Produto> produtoOptional = produtoRepository.findById(id);
         if(produtoOptional.isPresent()){
             Produto produto = produtoAtualizacaoForm.atualizar(id, produtoRepository);
-            return ResponseEntity.ok(new ProdutoDto(produto));
+            return Optional.of(new ProdutoDto(produto));
         }
-        return ResponseEntity.notFound().build();
+        return Optional.empty();
     }
 
 }

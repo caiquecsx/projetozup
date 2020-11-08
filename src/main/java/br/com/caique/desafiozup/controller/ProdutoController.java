@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/produto")
@@ -37,19 +38,30 @@ public class ProdutoController {
     @PostMapping
     @Transactional
     public ResponseEntity<?> cadastrar(@RequestBody @Valid ProdutoForm produtoForm) {
-        return produtoService.cadastrar(produtoForm);
+        Optional<ProdutoDto> produtoDto = produtoService.cadastrar(produtoForm);
+        if(produtoDto.isPresent()){
+            return ResponseEntity.ok(produtoDto.get());
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<?> remover(@PathVariable Long id){
-        return produtoService.remover(id);
+        if(produtoService.remover(id)){
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid ProdutoAtualizacaoForm form) {
-        return produtoService.atualizar(id, form);
+        Optional<ProdutoDto> produtoDto = produtoService.atualizar(id, form);
+        if(produtoDto.isPresent()){
+            return ResponseEntity.ok(produtoDto.get());
+        }
+        return ResponseEntity.badRequest().build();
     }
 
 }
