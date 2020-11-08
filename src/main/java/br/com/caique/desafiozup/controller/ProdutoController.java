@@ -67,7 +67,7 @@ public class ProdutoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> detalhes(@PathVariable Long id) {
-        Optional<ProdutoDto> produtoDtoOptional = produtoService.detalhes(id);
+        Optional<ProdutoDto> produtoDtoOptional = produtoService.detalhar(id);
         if(produtoDtoOptional.isPresent()){
             return ResponseEntity.ok(produtoDtoOptional);
         }

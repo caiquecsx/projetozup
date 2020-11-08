@@ -65,7 +65,7 @@ public class ProdutoService {
         return Optional.empty();
     }
 
-    public Optional<ProdutoDto> detalhes(Long id) {
+    public Optional<ProdutoDto> detalhar(Long id) {
         Optional<Produto> produtoOptional = produtoRepository.findById(id);
         if(produtoOptional.isPresent()){
             return Optional.of(new ProdutoDto(produtoOptional.get()));

@@ -10,6 +10,4 @@ class DesafiozupApplicationTests {
 	void contextLoads() {
 	}
 
-
-
 }
