@@ -29,7 +29,8 @@ public class ProdutoController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProdutoDto>> listar(@RequestParam int pagina, @RequestParam int quantidade) {
+    public ResponseEntity<Page<ProdutoDto>> listar(@RequestParam(required = false, defaultValue = "0") int pagina,
+                                                   @RequestParam(required = false, defaultValue = "10") int quantidade) {
         Span span = tracer.buildSpan("generate-name").start();
 
         return ResponseEntity.ok(produtoService.listar(pagina, quantidade));

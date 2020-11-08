@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 
 @Service
 public class PedidoService {
@@ -39,34 +40,33 @@ public class PedidoService {
         return new PedidoDto(pedido);
     }
 
-    public ResponseEntity<?> remover(Long id) {
+    public Boolean remover(Long id) {
         Optional<Pedido> pedidoOptional = pedidoRepository.findById(id);
 
         if(pedidoOptional.isPresent()) {
             pedidoRepository.deleteById(id);
-            return ResponseEntity.ok().build();
+            return true;
         }
-        return ResponseEntity.notFound().build();
+        return false;
     }
 
-    public ResponseEntity<PedidoDto> atualizar(Long id, PedidoAtualizacaoForm pedidoAtualizacaoForm) {
+    public Optional<PedidoDto> atualizar(Long id, PedidoAtualizacaoForm pedidoAtualizacaoForm) {
         Optional<Pedido> pedidoOptional = pedidoRepository.findById(id);
         if(pedidoOptional.isPresent()){
             Pedido pedido = pedidoAtualizacaoForm.atualizar(id, pedidoRepository, produtoRepository);
-            return ResponseEntity.ok(new PedidoDto(pedido));
+            return Optional.of(new PedidoDto(pedido));
         }
-        return ResponseEntity.notFound().build();
+        return Optional.empty();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PedidoDto> detalhar(@PathVariable Long id) {
-        //TODO mover implementação para o service e criar o detalhar de produto.
+    public Optional<PedidoDto> detalhar(@PathVariable Long id) {
         Optional<Pedido> pedidoOptional = pedidoRepository.findById(id);
         if (pedidoOptional.isPresent()){
-            return ResponseEntity.ok(new PedidoDto(pedidoOptional.get()));
+            return Optional.of(new PedidoDto(pedidoOptional.get()));
         }
 
-        return ResponseEntity.notFound().build();
+        return Optional.empty();
     }
 
 }

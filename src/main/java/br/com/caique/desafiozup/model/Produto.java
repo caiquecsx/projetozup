@@ -13,7 +13,6 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String descricao;
-    //TODO SKUs -> fabricante – produto – modelo – código – endereçamento de estoque
     private String sku;
     private Double peso;
     @ManyToOne(cascade = {CascadeType.PERSIST})
