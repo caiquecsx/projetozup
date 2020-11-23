@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.Cacheable;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -21,17 +22,18 @@ public class ProdutoController {
 
     private final ProdutoService produtoService;
 
-    @Autowired
-    Tracer tracer;
+//    @Autowired
+//    Tracer tracer;
 
     public ProdutoController(ProdutoService produtoService) {
         this.produtoService = produtoService;
     }
 
     @GetMapping
+    @Cacheable(value = "listaDeProdutos")
     public ResponseEntity<Page<ProdutoDto>> listar(@RequestParam(required = false, defaultValue = "0") int pagina,
                                                    @RequestParam(required = false, defaultValue = "10") int quantidade) {
-        Span span = tracer.buildSpan("generate-name").start();
+//        Span span = tracer.buildSpan("generate-name").start();
 
         return ResponseEntity.ok(produtoService.listar(pagina, quantidade));
     }
